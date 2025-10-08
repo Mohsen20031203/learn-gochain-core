@@ -37,6 +37,8 @@ func (s *Server) setupRouter() error {
 
 	router.Use(gzip.Gzip(gzip.DefaultCompression))
 
+	router.GET("/chain")
+	router.POST("/block")
 	s.router = router
 	return nil
 }
