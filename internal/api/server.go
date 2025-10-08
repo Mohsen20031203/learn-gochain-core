@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/Mohsen20031203/learn-gochain-core/config"
+	"github.com/Mohsen20031203/learn-gochain-core/internal/model"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
@@ -10,6 +11,7 @@ import (
 type Server struct {
 	Config config.Config
 	router *gin.Engine
+	Chain  []model.Block
 }
 
 func NewServer(config config.Config) *Server {
