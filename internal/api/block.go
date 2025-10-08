@@ -38,4 +38,8 @@ func (s *Server) CreatBlock(c *gin.Context) {
 
 func (s *Server) GetChain(c *gin.Context) {
 
+	c.JSON(200, gin.H{
+		"length": len(s.Chain),
+		"chain":  s.Chain,
+	})
 }
