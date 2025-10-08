@@ -25,7 +25,7 @@ func (s *Server) CreatBlock(c *gin.Context) {
 		block.PrevHash = s.Chain[len(s.Chain)-1].Hash
 	}
 
-	block.Mine(2)
+	block.Mine(5)
 
 	s.Chain = append(s.Chain, block)
 
