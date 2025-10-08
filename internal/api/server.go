@@ -13,7 +13,13 @@ type Server struct {
 }
 
 func NewServer(config config.Config) *Server {
-	return &Server{Config: config}
+	server := Server{Config: config}
+
+	err := server.setupRouter()
+	if err != nil {
+		panic(err)
+	}
+	return &server
 }
 
 func (s *Server) setupRouter() error {
