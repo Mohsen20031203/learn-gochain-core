@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Mohsen20031203/learn-gochain-core/config"
+	"github.com/Mohsen20031203/learn-gochain-core/internal/api"
 )
 
 func main() {
@@ -14,5 +15,7 @@ func main() {
 		return
 	}
 
-	_ = config
+	server := api.NewServer(config)
+	server.Start(":" + config.ApiPort)
+
 }
