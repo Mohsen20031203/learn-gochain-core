@@ -3,13 +3,13 @@ package api
 import (
 	"time"
 
-	"github.com/Mohsen20031203/learn-gochain-core/internal/model"
+	"github.com/Mohsen20031203/learn-gochain-core/internal/block"
 	"github.com/gin-gonic/gin"
 )
 
 func (s *Server) CreatBlock(c *gin.Context) {
 
-	var block model.Block
+	var block block.Block
 	err := c.BindJSON(&block)
 	if err != nil {
 		c.JSON(400, gin.H{"error": "Invalid request"})
@@ -17,6 +17,9 @@ func (s *Server) CreatBlock(c *gin.Context) {
 	}
 	block.Timestamp = time.Now()
 
+	//TODO: find hash from black
+	//TODO: chech block with node and rolus
+	//TODO: get trasaction from pool
 	if len(s.Chain) == 0 {
 		block.Index = 0
 		block.PrevHash = "0"
@@ -25,7 +28,7 @@ func (s *Server) CreatBlock(c *gin.Context) {
 		block.PrevHash = s.Chain[len(s.Chain)-1].Hash
 	}
 
-	block.Mine(5)
+	block.Mine(6)
 
 	s.Chain = append(s.Chain, block)
 
