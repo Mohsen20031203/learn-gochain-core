@@ -1,11 +1,9 @@
 package config
 
-import (
-	"github.com/spf13/viper"
-)
+import "github.com/spf13/viper"
 
 type Config struct {
-	ApiPort string `mapstructure:"API_PORT"`
+	Address string `mapstructure:"API_PORT"`
 }
 
 func LoadConfig(path string) (config Config, err error) {

@@ -1,32 +1,14 @@
-package api
+package http
 
 import (
-	"github.com/Mohsen20031203/learn-gochain-core/config"
-	"github.com/Mohsen20031203/learn-gochain-core/internal/block"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 )
 
-type Server struct {
-	Config config.Config
-	router *gin.Engine
-	Chain  []block.Block
-}
-
-func NewServer(config config.Config) *Server {
-	server := Server{Config: config}
-
-	err := server.setupRouter()
-	if err != nil {
-		panic(err)
-	}
-	return &server
-}
-
-func (s *Server) setupRouter() error {
-
+func NewRouter(handler *Handler) *gin.Engine {
 	router := gin.Default()
+
 	router.Use(gin.Recovery())
 
 	router.Use(cors.New(cors.Config{
@@ -39,12 +21,8 @@ func (s *Server) setupRouter() error {
 
 	router.Use(gzip.Gzip(gzip.DefaultCompression))
 
-	router.GET("/chain", s.GetChain)
-	router.POST("/block", s.CreatBlock)
-	s.router = router
-	return nil
-}
+	router.GET("/chain", handler.GetChain)
+	router.POST("/block", handler.CreateBlock)
 
-func (server *Server) Start(address string) error {
-	return server.router.Run(address)
+	return router
 }
