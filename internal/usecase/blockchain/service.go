@@ -1,31 +1,88 @@
 package blockchain
 
 import (
+	"errors"
 	"time"
 
+	"github.com/Mohsen20031203/learn-gochain-core/config"
 	"github.com/Mohsen20031203/learn-gochain-core/internal/domain/block"
 	"github.com/Mohsen20031203/learn-gochain-core/internal/domain/blockchain"
+	"github.com/Mohsen20031203/learn-gochain-core/internal/infrastructure/storage/lvldb"
+	"github.com/syndtr/goleveldb/leveldb"
 )
 
 type Service struct {
-	chain *blockchain.Blockchain
+	chain  *blockchain.Blockchain
+	repo   Repository
+	config config.Config
 }
 
-func NewService(chain *blockchain.Blockchain) *Service {
-	return &Service{chain: chain}
-}
+func NewService(config config.Config) *Service {
 
-func (s *Service) CreateBlock(b block.Block) (block.Block, error) {
-	b.Timestamp = time.Now()
+	repo := lvldb.New(config.FileStoragePath)
+	repo.Open()
 
-	err := s.chain.AddBlock(&b)
-	if err != nil {
-		return block.Block{}, err
+	chain := blockchain.Blockchain{
+		Difficulty: config.Difficulty,
 	}
 
-	return b, nil
+	return &Service{chain: &chain, repo: repo, config: config}
 }
 
-func (s *Service) GetChain() []block.Block {
-	return s.chain.Blocks
+func (s *Service) AddBlock(data string) (*block.Block, error) {
+	last, err := s.repo.Get(LastBlockKey)
+	if err != leveldb.ErrNotFound && err != nil {
+		return nil, err
+	}
+
+	newBlock := block.Block{
+		Timestamp: time.Now(),
+		Data:      data,
+		Index:     0,
+		PrevHash:  "0",
+	}
+
+	if last != nil {
+		newBlock.Index = last.Index + 1
+		newBlock.PrevHash = last.Hash
+	}
+
+	newBlock.Mine(s.chain.Difficulty)
+
+	if last != nil && !s.chain.ValidateNewBlock(*last, newBlock) {
+		return nil, errors.New("invalid block")
+	}
+
+	if last != nil {
+		if err := s.repo.Save(last.Hash, last); err != nil {
+			return nil, err
+		}
+	}
+
+	if err := s.repo.Save(LastBlockKey, &newBlock); err != nil {
+		return nil, err
+	}
+
+	return &newBlock, nil
+}
+
+func (s *Service) GetChain() ([]block.Block, error) {
+	var chain []block.Block
+
+	current, err := s.repo.Get(LastBlockKey)
+	if err != nil {
+		return nil, err
+	}
+	for current != nil {
+		chain = append([]block.Block{*current}, chain...) // prepend
+		if current.PrevHash == "0" {
+			break
+		}
+		current, err = s.repo.Get(current.PrevHash)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return chain, nil
 }

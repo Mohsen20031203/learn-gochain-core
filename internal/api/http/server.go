@@ -22,5 +22,5 @@ func NewServer(cfg config.Config, handler *Handler) *Server {
 }
 
 func (s *Server) Start() error {
-	return s.router.Run(":" + s.config.Address)
+	return s.router.Run(":" + s.config.Port)
 }

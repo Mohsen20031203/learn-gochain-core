@@ -17,7 +17,11 @@ func NewHandler(service *blockchain.Service) *Handler {
 }
 
 func (h *Handler) GetChain(c *gin.Context) {
-	chain := h.service.GetChain()
+	chain, err := h.service.GetChain()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"length": len(chain),
 		"chain":  chain,
@@ -32,7 +36,7 @@ func (h *Handler) CreateBlock(c *gin.Context) {
 		return
 	}
 
-	newBlock, err := h.service.CreateBlock(b)
+	newBlock, err := h.service.AddBlock(b.Data)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
