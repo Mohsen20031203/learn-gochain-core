@@ -4,3 +4,4 @@
 /internal/infrastructure/storage/boltdb
 /internal/infrastructure/storage/file
 /data
+/cmd/gochain/

@@ -35,6 +35,12 @@ func (s *Service) AddBlock(data string) (*block.Block, error) {
 		return nil, err
 	}
 
+	if last != nil {
+		if !last.HasValidPoW(s.chain.Difficulty) {
+			return nil, errors.New("last block has invalid proof of work")
+		}
+	}
+
 	newBlock := block.Block{
 		Timestamp: time.Now(),
 		Data:      data,
