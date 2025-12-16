@@ -52,3 +52,10 @@ func (mp *Mempool) RemoveTransaction(tx transaction.Transaction) {
 func (mp *Mempool) Clear() {
 	mp.transactions = []transaction.Transaction{}
 }
+
+func (mp *Mempool) GetTransactionsCount(count int) []transaction.Transaction {
+	if count >= len(mp.transactions) {
+		return mp.transactions
+	}
+	return mp.transactions[:count]
+}

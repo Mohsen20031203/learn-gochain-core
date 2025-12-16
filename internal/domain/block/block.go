@@ -3,83 +3,51 @@ package block
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"strconv"
 	"time"
+
+	"github.com/Mohsen20031203/learn-gochain-core/internal/domain/transaction"
 )
 
 type Block struct {
-	index     int64
-	timestamp time.Time
-	data      string
-	hash      string
-	prevHash  string
-	nonce     int64
+	Index        int                       `json:"index"`
+	Timestamp    time.Time                 `json:"timestamp"`
+	Transactions []transaction.Transaction `json:"transactions"`
+	Hash         string                    `json:"hash"`
+	PrevHash     string                    `json:"prev_hash"`
+	Nonce        int                       `json:"nonce"`
 }
 
-func NewBlock(index int64, data string, prevHash string) *Block {
+func NewBlock(index int, transactions []transaction.Transaction, prevHash string) *Block {
 	block := &Block{
-		index:     index,
-		timestamp: time.Now(),
-		data:      data,
-		prevHash:  prevHash,
-		nonce:     0,
+		Index:        index,
+		Timestamp:    time.Now(),
+		Transactions: transactions,
+		PrevHash:     prevHash,
+		Nonce:        0,
 	}
 	return block
 }
 
-func (b *Block) Index() int64 {
-	return b.index
-}
-
-func (b *Block) Timestamp() time.Time {
-	return b.timestamp
-}
-
-func (b *Block) Data() string {
-	return b.data
-}
-
-func (b *Block) Hash() string {
-	return b.hash
-}
-
-func (b *Block) PrevHash() string {
-	return b.prevHash
-}
-
-func (b *Block) Nonce() int64 {
-	return b.nonce
-}
-
-func (b *Block) SetHash(hash string) {
-	b.hash = hash
-}
-
-func (b *Block) SetPrevHash(prevHash string) {
-	b.prevHash = prevHash
-}
-
-func (b *Block) SetNonce(nonce int64) {
-	b.nonce = nonce
-}
-
 func (b *Block) CalculateHash() string {
+	data, _ := json.Marshal(b.Transactions)
 	record :=
-		strconv.FormatInt(b.index, 10) +
-			b.timestamp.String() +
-			b.data +
-			b.prevHash +
-			strconv.FormatInt(b.nonce, 10)
+		strconv.FormatInt(int64(b.Index), 10) +
+			b.Timestamp.String() +
+			string(data) +
+			b.PrevHash +
+			strconv.FormatInt(int64(b.Nonce), 10)
 
 	hash := sha256.Sum256([]byte(record))
 	return hex.EncodeToString(hash[:])
 }
 
 func (b *Block) IsValid(prev Block) bool {
-	if b.prevHash != prev.hash {
+	if b.PrevHash != prev.Hash {
 		return false
 	}
-	if b.CalculateHash() != b.hash {
+	if b.CalculateHash() != b.Hash {
 		return false
 	}
 	return true

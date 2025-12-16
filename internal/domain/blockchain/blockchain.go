@@ -29,11 +29,11 @@ func (bc *Blockchain) setDifficulty(difficulty int) {
 }
 
 func (bc *Blockchain) IsValidNewBlock(block *block.Block) bool {
-	return block.PrevHash() == bc.lastHash
+	return block.PrevHash == bc.lastHash
 }
 
 func (bc *Blockchain) UpdateWithNewBlock(block *block.Block) {
-	bc.setLastHash(block.Hash())
+	bc.setLastHash(block.Hash)
 	bc.height++
 }
 
@@ -55,14 +55,14 @@ func (bc *Blockchain) Mine(b *block.Block) {
 	for {
 		hash := b.CalculateHash()
 		if strings.HasPrefix(hash, prefix) {
-			b.SetHash(hash)
+			b.Hash = hash
 			break
 		}
-		b.SetNonce(b.Nonce() + 1)
+		b.Nonce++
 	}
 }
 
 func (bc *Blockchain) IsValidPoW(b *block.Block) bool {
 	prefix := strings.Repeat("0", bc.difficulty)
-	return strings.HasPrefix(b.Hash(), prefix)
+	return strings.HasPrefix(b.Hash, prefix)
 }

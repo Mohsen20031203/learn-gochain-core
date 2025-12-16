@@ -31,3 +31,7 @@ func (n *Node) SizeMempool() int {
 func (n *Node) RemoveTransactionMempool(tx transaction.Transaction) {
 	n.mempool.RemoveTransaction(tx)
 }
+
+func (n *Node) GetMempoolTransaction(count int) []transaction.Transaction {
+	return n.mempool.GetTransactionsCount(count)
+}

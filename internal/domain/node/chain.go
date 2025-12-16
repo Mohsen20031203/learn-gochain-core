@@ -26,3 +26,7 @@ func (n *Node) CountBlocksinChain() int {
 func (n *Node) GetChainDifficulty() int {
 	return n.chain.GetDifficulty()
 }
+
+func (n *Node) MineBlock(b *block.Block) {
+	n.chain.Mine(b)
+}

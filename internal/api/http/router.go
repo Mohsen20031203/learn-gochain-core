@@ -22,7 +22,7 @@ func NewRouter(handler *Handler) *gin.Engine {
 	router.Use(gzip.Gzip(gzip.DefaultCompression))
 
 	router.GET("/chain", handler.GetChain)
-	router.POST("/block", handler.CreateBlock)
+	router.POST("/transactions", handler.SubmitTransactions)
 
 	return router
 }
