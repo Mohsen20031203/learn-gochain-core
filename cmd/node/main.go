@@ -11,8 +11,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	service := blockchain.NewService(cfg)
-	handler := api.NewHandler(service)
+	node := blockchain.NewService(cfg)
+	handler := api.NewHandler(node)
 	server := api.NewServer(cfg, handler)
 
 	if err := server.Start(); err != nil {

@@ -9,15 +9,15 @@ import (
 )
 
 type Handler struct {
-	service *blockchain.Service
+	node *blockchain.NodeService
 }
 
-func NewHandler(service *blockchain.Service) *Handler {
-	return &Handler{service: service}
+func NewHandler(node *blockchain.NodeService) *Handler {
+	return &Handler{node: node}
 }
 
 func (h *Handler) GetChain(c *gin.Context) {
-	chain, err := h.service.GetChain()
+	chain, err := h.node.GetChain()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -36,7 +36,7 @@ func (h *Handler) CreateBlock(c *gin.Context) {
 		return
 	}
 
-	newBlock, err := h.service.AddBlock(b.Data)
+	newBlock, err := h.node.AddBlock(b.Data)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
