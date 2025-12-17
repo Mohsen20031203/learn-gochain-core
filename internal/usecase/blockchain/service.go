@@ -9,7 +9,6 @@ import (
 	"github.com/Mohsen20031203/learn-gochain-core/internal/domain/node"
 	"github.com/Mohsen20031203/learn-gochain-core/internal/domain/transaction"
 	"github.com/Mohsen20031203/learn-gochain-core/internal/infrastructure/storage/lvldb"
-	"github.com/syndtr/goleveldb/leveldb"
 )
 
 // 1. validata the tx
@@ -93,38 +92,23 @@ func (s *NodeService) mineOnce() {
 	tx := make([]transaction.Transaction, len(tx2))
 	copy(tx, tx2)
 
-	last, err := s.GetLastBlock()
-	if err != leveldb.ErrNotFound && err != nil {
-		fmt.Println("Failed to get last block:", err)
-		return
-	}
+	lastBlock := s.node.GetChainLastBlockHash()
 
 	var blc *block.Block
-	if last == nil {
+	if lastBlock == "" {
 		blc = block.NewBlock(0, tx, "0")
 	} else {
-		blc = block.NewBlock(last.Index+1, tx, last.Hash)
+		blc = block.NewBlock(s.node.CountBlocksinChain(), tx, lastBlock)
 	}
 
 	s.node.MineBlock(blc)
 
-	if last != nil && !s.node.IsValidNewBlockChain(*blc) {
+	if lastBlock != "" && !s.node.IsValidNewBlockChain(*blc) {
 		fmt.Println("Invalid mined block")
 		return
 	}
 
-	if last != nil {
-		if err := s.repo.Save(last.Hash, last); err != nil {
-			fmt.Println("Failed to save block:", err)
-			return
-		}
-	}
-
-	if err := s.repo.Save(LastBlockKey, blc); err != nil {
-		fmt.Println("Failed to save block:", err)
-		return
-	}
-	s.node.UpdateChain(*blc)
+	s.saveBlock(blc)
 
 	if s.node.SizeMempool() == len(tx) {
 		s.node.ClearMempool()
@@ -134,6 +118,28 @@ func (s *NodeService) mineOnce() {
 	for _, t := range tx {
 		s.node.RemoveTransactionMempool(t)
 	}
+}
+
+func (s *NodeService) saveBlock(b *block.Block) error {
+	lastBlock := s.node.GetChainLastBlockHash()
+	if lastBlock != "" {
+		bl, err := s.repo.Get(lastBlock)
+		if err != nil {
+			return err
+		}
+		if err := s.repo.Save(lastBlock, bl); err != nil {
+			return err
+		}
+	}
+
+	if err := s.repo.Save(LastBlockKey, b); err != nil {
+		return err
+	}
+	if err := s.repo.Save(b.Hash, b); err != nil {
+		return err
+	}
+	s.node.UpdateChain(*b)
+	return nil
 }
 
 /*
