@@ -166,3 +166,11 @@ func (s *NodeService) GetChain() ([]block.Block, error) {
 
 	return chain, nil
 }
+
+func (s *NodeService) GetBlockByHash(block string) (*block.Block, error) {
+	value, err := s.repo.Get(block)
+	if err != nil {
+		return nil, err
+	}
+	return value, nil
+}
