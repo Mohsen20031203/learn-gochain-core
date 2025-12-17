@@ -6,6 +6,8 @@ type Config struct {
 	Port            string `mapstructure:"API_PORT"`
 	Difficulty      int    `mapstructure:"BLOCKCHAIN_DIFFICULTY"`
 	FileStoragePath string `mapstructure:"FILE_STORAGE_PATH"`
+	NodeID          string `mapstructure:"NODE_ID"`
+	BatchSize       int    `mapstructure:"BATCH_SIZE"`
 }
 
 func LoadConfig(path string) (config Config, err error) {

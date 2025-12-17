@@ -3,21 +3,21 @@ package http
 import (
 	"net/http"
 
-	"github.com/Mohsen20031203/learn-gochain-core/internal/domain/block"
+	"github.com/Mohsen20031203/learn-gochain-core/internal/domain/transaction"
 	"github.com/Mohsen20031203/learn-gochain-core/internal/usecase/blockchain"
 	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
-	service *blockchain.Service
+	node *blockchain.NodeService
 }
 
-func NewHandler(service *blockchain.Service) *Handler {
-	return &Handler{service: service}
+func NewHandler(node *blockchain.NodeService) *Handler {
+	return &Handler{node: node}
 }
 
 func (h *Handler) GetChain(c *gin.Context) {
-	chain, err := h.service.GetChain()
+	chain, err := h.node.GetChain()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -28,6 +28,32 @@ func (h *Handler) GetChain(c *gin.Context) {
 	})
 }
 
+func (h *Handler) SubmitTransactions(c *gin.Context) {
+	var rep []transaction.Transaction
+
+	if err := c.BindJSON(&rep); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		return
+	}
+
+	err := h.node.SubmitTransactions(rep)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "transaction added to mempool"})
+}
+
+func (h *Handler) GetMempool(c *gin.Context) {
+	mempool := h.node.GetMempoolTransactions()
+	c.JSON(http.StatusOK, gin.H{
+		"length":       len(mempool),
+		"mempool_txns": mempool,
+	})
+}
+
+/*
 func (h *Handler) CreateBlock(c *gin.Context) {
 	var b block.Block
 
@@ -36,7 +62,7 @@ func (h *Handler) CreateBlock(c *gin.Context) {
 		return
 	}
 
-	newBlock, err := h.service.AddBlock(b.Data)
+	newBlock, err := h.node.AddBlock(b.Data)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -44,3 +70,5 @@ func (h *Handler) CreateBlock(c *gin.Context) {
 
 	c.JSON(http.StatusOK, newBlock)
 }
+
+*/

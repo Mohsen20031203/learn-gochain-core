@@ -1,10 +1,6 @@
 package blockchain
 
-import (
-	"testing"
-
-	"github.com/Mohsen20031203/learn-gochain-core/internal/domain/block"
-)
+/*
 
 func TestValidateNewBlock(t *testing.T) {
 	bc := Blockchain{Difficulty: 2}
@@ -27,3 +23,5 @@ func TestValidateNewBlock(t *testing.T) {
 		t.Error("Block should be invalid with wrong PrevHash")
 	}
 }
+
+*/

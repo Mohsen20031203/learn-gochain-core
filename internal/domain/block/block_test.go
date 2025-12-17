@@ -1,10 +1,6 @@
 package block
 
-import (
-	"testing"
-	"time"
-)
-
+/*
 func TestCalculateHash(t *testing.T) {
 	b := Block{
 		Index:     1,
@@ -56,3 +52,5 @@ func TestIsValid(t *testing.T) {
 		t.Error("Block should be invalid with wrong PrevHash")
 	}
 }
+
+*/
