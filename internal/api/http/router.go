@@ -1,12 +1,13 @@
 package http
 
 import (
+	"github.com/Mohsen20031203/learn-gochain-core/internal/api/http/handler"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 )
 
-func NewRouter(handler *Handler) *gin.Engine {
+func NewRouter(handler *handler.Handler) *gin.Engine {
 	router := gin.Default()
 
 	router.Use(gin.Recovery())

@@ -5,6 +5,7 @@ import (
 
 	"github.com/Mohsen20031203/learn-gochain-core/config"
 	api "github.com/Mohsen20031203/learn-gochain-core/internal/api/http"
+	"github.com/Mohsen20031203/learn-gochain-core/internal/api/http/handler"
 	"github.com/Mohsen20031203/learn-gochain-core/internal/usecase/blockchain"
 )
 
@@ -17,7 +18,7 @@ func main() {
 	defer cancel()
 
 	node := blockchain.NewService(cfg)
-	handler := api.NewHandler(node)
+	handler := handler.NewHandler(node)
 	server := api.NewServer(cfg, handler)
 
 	node.StartMiner(ctx)
