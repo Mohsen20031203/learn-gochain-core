@@ -23,6 +23,7 @@ func NewRouter(handler *Handler) *gin.Engine {
 
 	router.GET("/chain", handler.GetChain)
 	router.POST("/transactions", handler.SubmitTransactions)
+	router.GET("/mempool", handler.GetMempool)
 
 	return router
 }

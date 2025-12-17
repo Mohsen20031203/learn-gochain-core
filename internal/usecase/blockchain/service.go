@@ -142,6 +142,10 @@ func (s *NodeService) saveBlock(b *block.Block) error {
 	return nil
 }
 
+func (s *NodeService) GetMempoolTransactions() []transaction.Transaction {
+	return s.node.GetMempoolTransactions()
+}
+
 /*
 
 func (s *NodeService) AddBlock(data string) (*block.Block, error) {
