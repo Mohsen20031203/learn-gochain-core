@@ -52,23 +52,3 @@ func (h *Handler) GetMempool(c *gin.Context) {
 		"mempool_txns": mempool,
 	})
 }
-
-/*
-func (h *Handler) CreateBlock(c *gin.Context) {
-	var b block.Block
-
-	if err := c.BindJSON(&b); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
-		return
-	}
-
-	newBlock, err := h.node.AddBlock(b.Data)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, newBlock)
-}
-
-*/
