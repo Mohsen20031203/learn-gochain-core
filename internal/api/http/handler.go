@@ -45,6 +45,14 @@ func (h *Handler) SubmitTransactions(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "transaction added to mempool"})
 }
 
+func (h *Handler) GetMempool(c *gin.Context) {
+	mempool := h.node.GetMempoolTransactions()
+	c.JSON(http.StatusOK, gin.H{
+		"length":       len(mempool),
+		"mempool_txns": mempool,
+	})
+}
+
 /*
 func (h *Handler) CreateBlock(c *gin.Context) {
 	var b block.Block
