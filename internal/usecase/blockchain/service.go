@@ -146,48 +146,6 @@ func (s *NodeService) GetMempoolTransactions() []transaction.Transaction {
 	return s.node.GetMempoolTransactions()
 }
 
-/*
-
-func (s *NodeService) AddBlock(data string) (*block.Block, error) {
-	last, err := s.repo.Get(LastBlockKey)
-	if err != leveldb.ErrNotFound && err != nil {
-		return nil, err
-	}
-
-	if last != nil {
-		if !last.HasValidPoW(s.node.Chain.Difficulty) {
-			return nil, errors.New("last block has invalid proof of work")
-		}
-	}
-	var ind int64 = 0
-
-	if last != nil {
-		ind = last.Index() + 1
-		newBlock.Index() = last.Index + 1
-		newBlock.PrevHash = last.Hash
-	}
-	newBlock := block.NewBlock(ind, data, "0")
-
-	newBlock.Mine(s.node.Chain.Difficulty)
-
-	if last != nil && !s.node.Chain.ValidateNewBlock(last, &newBlock) {
-		return nil, errors.New("invalid block")
-	}
-
-	if last != nil {
-		if err := s.repo.Save(last.Hash, last); err != nil {
-			return nil, err
-		}
-	}
-
-	if err := s.repo.Save(LastBlockKey, &newBlock); err != nil {
-		return nil, err
-	}
-
-	return &newBlock, nil
-}
-*/
-
 func (s *NodeService) GetChain() ([]block.Block, error) {
 	var chain []block.Block
 
@@ -204,10 +162,6 @@ func (s *NodeService) GetChain() ([]block.Block, error) {
 		if err != nil {
 			return nil, err
 		}
-	}
-
-	if len(chain) == 0 {
-		return nil, nil
 	}
 
 	return chain, nil
