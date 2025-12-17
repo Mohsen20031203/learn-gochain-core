@@ -72,7 +72,7 @@ func (s *NodeService) StartMiner(ctx context.Context) {
 			select {
 			case <-s.mineTrigger:
 				for {
-					if s.node.SizeMempool() == 0 {
+					if s.node.SizeMempool() < s.config.BatchSize {
 						break
 					}
 					s.mineOnce()
