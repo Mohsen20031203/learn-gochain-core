@@ -1,6 +1,8 @@
 package http
 
 import (
+	"strconv"
+
 	"github.com/Mohsen20031203/learn-gochain-core/config"
 	"github.com/Mohsen20031203/learn-gochain-core/internal/api/http/handler"
 	"github.com/gin-gonic/gin"
@@ -23,5 +25,5 @@ func NewServer(cfg config.Config, handler *handler.Handler) *Server {
 }
 
 func (s *Server) Start() error {
-	return s.router.Run(":" + s.config.Port)
+	return s.router.Run(":" + strconv.Itoa(s.config.Port))
 }

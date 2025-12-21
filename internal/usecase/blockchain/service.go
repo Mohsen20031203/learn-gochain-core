@@ -19,12 +19,27 @@ import (
 // 6. save new block to the repo
 
 type NodeService struct {
-	node        *node.Node
-	repo        Repository
-	config      config.Config
-	mineTrigger chan struct{}
+	node         *node.Node
+	repo         Repository
+	config       config.Config
+	mineTrigger  chan struct{}
+	SeenMessages map[string]bool
+	Message      []Message
 }
 
+type Message struct {
+	ID      string `json:"id"`
+	From    string `json:"from"`
+	Content string `json:"message"`
+}
+
+func (s *NodeService) GetID() string {
+	return s.node.GetID()
+}
+
+func (s *NodeService) GetConfig() config.Config {
+	return s.config
+}
 func NewService(config config.Config) *NodeService {
 
 	repo := lvldb.New(config.FileStoragePath)
@@ -33,10 +48,11 @@ func NewService(config config.Config) *NodeService {
 	node := node.NewNode(config.NodeID, config.Difficulty)
 
 	return &NodeService{
-		node:        node,
-		repo:        repo,
-		config:      config,
-		mineTrigger: make(chan struct{}),
+		node:         node,
+		repo:         repo,
+		config:       config,
+		mineTrigger:  make(chan struct{}),
+		SeenMessages: make(map[string]bool),
 	}
 }
 

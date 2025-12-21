@@ -26,6 +26,8 @@ func NewRouter(handler *handler.Handler) *gin.Engine {
 	router.POST("/transactions", handler.SubmitTransactions)
 	router.GET("/block/:hash", handler.GetBlockByHash)
 	router.GET("/mempool", handler.GetMempool)
+	router.POST("/peers", handler.SendMassage)
+	router.GET("/massage/show", handler.ShowMessage)
 
 	return router
 }
