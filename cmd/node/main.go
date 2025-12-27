@@ -6,24 +6,44 @@ import (
 	"github.com/Mohsen20031203/learn-gochain-core/config"
 	api "github.com/Mohsen20031203/learn-gochain-core/internal/api/http"
 	"github.com/Mohsen20031203/learn-gochain-core/internal/api/http/handler"
+	"github.com/Mohsen20031203/learn-gochain-core/internal/infrastructure/network"
 	"github.com/Mohsen20031203/learn-gochain-core/internal/usecase/blockchain"
 )
 
 func main() {
+
 	cfg, err := config.LoadConfig(".")
 	if err != nil {
 		panic(err)
 	}
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	node := blockchain.NewService(cfg)
-	handler := handler.NewHandler(node)
-	server := api.NewServer(cfg, handler)
+	// Usecase
+	nodeService := blockchain.NewService(cfg)
 
-	node.StartMiner(ctx)
+	tcpServer := network.NewTCPServer(
+		cfg.TCPAddress,
+		nodeService.HandleNodeMessage,
+	)
+
+	if err := tcpServer.Start(); err != nil {
+		panic(err)
+	}
+
+	// 🔹 Broadcaster
+	broadcaster := network.NewTCPBroadcaster(cfg.Peers)
+	nodeService.SetBroadcaster(broadcaster)
+
+	h := handler.NewHandler(nodeService)
+	server := api.NewServer(cfg, h)
+
+	// 🔹 Miner
+	nodeService.StartMiner(ctx)
 
 	if err := server.Start(); err != nil {
 		panic(err)
 	}
+
 }

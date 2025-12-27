@@ -30,3 +30,7 @@ func (n *Node) GetChainDifficulty() int {
 func (n *Node) MineBlock(b *block.Block) {
 	n.chain.Mine(b)
 }
+
+func (s *Node) IsValidPoW(b *block.Block) bool {
+	return s.chain.IsValidPoW(b)
+}
