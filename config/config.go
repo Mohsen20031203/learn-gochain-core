@@ -1,13 +1,20 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"fmt"
+	"strings"
+
+	"github.com/spf13/viper"
+)
 
 type Config struct {
-	Port            string `mapstructure:"API_PORT"`
-	Difficulty      int    `mapstructure:"BLOCKCHAIN_DIFFICULTY"`
-	FileStoragePath string `mapstructure:"FILE_STORAGE_PATH"`
-	NodeID          string `mapstructure:"NODE_ID"`
-	BatchSize       int    `mapstructure:"BATCH_SIZE"`
+	Port            string   `mapstructure:"API_PORT"`
+	Difficulty      int      `mapstructure:"BLOCKCHAIN_DIFFICULTY"`
+	FileStoragePath string   `mapstructure:"FILE_STORAGE_PATH"`
+	NodeID          string   `mapstructure:"NODE_ID"`
+	BatchSize       int      `mapstructure:"BATCH_SIZE"`
+	Peers           []string `mapstructure:"PEERS"`
+	TCPAddress      string   `mapstructure:"TCP_PORT"`
 }
 
 func LoadConfig(path string) (config Config, err error) {
@@ -22,6 +29,15 @@ func LoadConfig(path string) (config Config, err error) {
 		return
 	}
 
+	err = viper.Unmarshal(&config)
+	fmt.Println(config.NodeID)
+
+	for i, p := range config.Peers {
+		if strings.Contains(p, config.TCPAddress) {
+			config.Peers = append(config.Peers[:i], config.Peers[i+1:]...)
+		}
+	}
+
 	if config.Port == "" {
 		viper.SetDefault("API_PORT", "9090")
 	}
@@ -33,7 +49,9 @@ func LoadConfig(path string) (config Config, err error) {
 	if config.FileStoragePath == "" {
 		viper.SetDefault("FILE_STORAGE_PATH", "chainDB")
 	}
-	err = viper.Unmarshal(&config)
 
+	for _, p := range config.Peers {
+		fmt.Println("port : ", p)
+	}
 	return
 }
