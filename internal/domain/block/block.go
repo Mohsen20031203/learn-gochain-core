@@ -22,7 +22,6 @@ type Block struct {
 func NewBlock(index int, transactions []transaction.Transaction, prevHash string) *Block {
 	block := &Block{
 		Index:        index,
-		Timestamp:    time.Now(),
 		Transactions: transactions,
 		PrevHash:     prevHash,
 		Nonce:        0,

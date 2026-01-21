@@ -37,7 +37,6 @@ func (s *TCPServer) Start() error {
 			go s.handleConn(conn)
 		}
 	}()
-
 	return nil
 }
 
