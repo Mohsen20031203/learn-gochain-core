@@ -2,7 +2,6 @@ package mempool
 
 import (
 	"github.com/Mohsen20031203/learn-gochain-core/internal/domain/transaction"
-	"github.com/Mohsen20031203/learn-gochain-core/internal/infrastructure/memmpoldb"
 )
 
 type Mempool struct {
@@ -10,7 +9,7 @@ type Mempool struct {
 }
 
 // NewMempool creates and returns a new Mempool instance
-func NewMempool() memmpoldb.IntMemmpol {
+func NewMempool() MempoolDB {
 	return &Mempool{
 		transactions: []transaction.Transaction{},
 	}

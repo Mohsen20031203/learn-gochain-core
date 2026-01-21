@@ -3,13 +3,12 @@ package node
 import (
 	"github.com/Mohsen20031203/learn-gochain-core/internal/domain/blockchain"
 	"github.com/Mohsen20031203/learn-gochain-core/internal/domain/mempool"
-	"github.com/Mohsen20031203/learn-gochain-core/internal/infrastructure/memmpoldb"
 )
 
 type Node struct {
 	id      string
 	chain   *blockchain.Blockchain
-	mempool memmpoldb.IntMemmpol
+	mempool mempool.MempoolDB
 }
 
 // NewNode creates and returns a new Node instance.

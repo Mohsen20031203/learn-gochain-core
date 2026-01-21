@@ -1,8 +1,8 @@
-package memmpoldb
+package mempool
 
 import "github.com/Mohsen20031203/learn-gochain-core/internal/domain/transaction"
 
-type IntMemmpol interface {
+type MempoolDB interface {
 	AddTransaction(tx transaction.Transaction)
 	GetTransactions() []transaction.Transaction
 	HasTransaction(txID string) bool
