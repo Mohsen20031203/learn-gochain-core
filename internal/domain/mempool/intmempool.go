@@ -1,6 +1,8 @@
 package mempool
 
-import "github.com/Mohsen20031203/learn-gochain-core/internal/domain/transaction"
+import (
+	"github.com/Mohsen20031203/learn-gochain-core/internal/domain/transaction"
+)
 
 type MempoolDB interface {
 	AddTransaction(tx transaction.Transaction)

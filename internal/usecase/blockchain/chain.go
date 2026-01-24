@@ -10,7 +10,7 @@ func (s *NodeService) GetChain() ([]block.Block, error) {
 		return nil, err
 	}
 	for current.Hash != "" {
-		chain = append([]block.Block{*current}, chain...) // prepend
+		chain = append([]block.Block{*current}, chain...)
 		if current.PrevHash == "0" {
 			break
 		}

@@ -20,6 +20,7 @@ func (h *Handler) SubmitTransactions(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	h.node.BroadcastTrx(&rep)
 
 	c.JSON(http.StatusOK, gin.H{"message": "transaction added to mempool"})
 }
