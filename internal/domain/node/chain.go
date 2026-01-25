@@ -1,6 +1,10 @@
 package node
 
-import "github.com/Mohsen20031203/learn-gochain-core/internal/domain/block"
+import (
+	"context"
+
+	"github.com/Mohsen20031203/learn-gochain-core/internal/domain/block"
+)
 
 // IsValidNewBlockChain checks if a new block is valid according to the node's blockchain
 func (n *Node) IsValidNewBlockChain(blockHash block.Block) bool {
@@ -27,8 +31,8 @@ func (n *Node) GetChainDifficulty() int {
 	return n.chain.GetDifficulty()
 }
 
-func (n *Node) MineBlock(b *block.Block) {
-	n.chain.Mine(b)
+func (n *Node) MineBlock(b *block.Block, ctx context.Context) bool {
+	return n.chain.Mine(ctx, b)
 }
 
 func (s *Node) IsValidPoW(b *block.Block) bool {

@@ -25,11 +25,7 @@ func (s *NodeService) HandleNodeMessage(msg network.Message) {
 			fmt.Println("received invalid block from peer")
 			return
 		}
-		if err := s.saveBlock(&blc); err != nil {
-			fmt.Println("error saving block from node message:", err)
-			return
-		}
-		fmt.Println("block saved from peer:", blc.Hash)
+		s.TryAcceptBlock(blc)
 	case "tx":
 		var txs []transaction.Transaction
 		if err := json.Unmarshal(msg.Data, &txs); err != nil {

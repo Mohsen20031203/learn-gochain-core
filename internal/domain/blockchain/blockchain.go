@@ -1,6 +1,7 @@
 package blockchain
 
 import (
+	"context"
 	"strings"
 
 	"github.com/Mohsen20031203/learn-gochain-core/internal/domain/block"
@@ -49,14 +50,20 @@ func (bc *Blockchain) CountBlocks() int {
 	return bc.height
 }
 
-func (bc *Blockchain) Mine(b *block.Block) {
+func (bc *Blockchain) Mine(ctx context.Context, b *block.Block) bool {
 	prefix := strings.Repeat("0", bc.difficulty)
 
 	for {
+		select {
+		case <-ctx.Done():
+			return false
+		default:
+		}
+
 		hash := b.CalculateHash()
 		if strings.HasPrefix(hash, prefix) {
 			b.Hash = hash
-			break
+			return true
 		}
 		b.Nonce++
 	}

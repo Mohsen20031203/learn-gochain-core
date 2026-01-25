@@ -96,17 +96,37 @@ func (s *NodeService) mineOnce() {
 	} else {
 		blc = block.NewBlock(s.node.CountBlocksinChain(), tx, lastBlock)
 	}
+	mindMe := make(chan block.Block, 1)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-	s.node.MineBlock(blc)
-	blc.Timestamp = time.Now()
+	go func(b *block.Block) {
+		ok := s.node.MineBlock(b, ctx)
+		if !ok {
+			return
+		}
+		blkCopy := *b
+		blkCopy.Timestamp = time.Now()
+		mindMe <- blkCopy
+	}(blc)
 
-	if lastBlock != "" && !s.node.IsValidNewBlockChain(*blc) {
-		fmt.Println("Invalid mined block")
-		return
+	select {
+	case netBlock := <-s.fistBlock:
+		cancel()
+		fmt.Println("Lost mining race to network")
+		s.saveBlock(&netBlock)
+		fmt.Println("i give the block from another node")
+
+	case myBlock := <-mindMe:
+		if lastBlock != "" && !s.node.IsValidNewBlockChain(myBlock) {
+			fmt.Println("Invalid mined block")
+			return
+		}
+
+		s.saveBlock(&myBlock)
+		fmt.Println("i can mine the block")
+		s.broadcastBlock(&myBlock)
 	}
-
-	s.saveBlock(blc)
-	s.broadcastBlock(blc)
 
 	if s.node.SizeMempool() == len(tx) {
 		s.node.ClearMempool()
