@@ -18,7 +18,7 @@ func (s *NodeService) BroadcastTrx(trx *[]transaction.Transaction) {
 	}
 
 	msg := network.Message{
-		Type: "tx",
+		Type: network.TxMessage,
 		Data: data,
 	}
 

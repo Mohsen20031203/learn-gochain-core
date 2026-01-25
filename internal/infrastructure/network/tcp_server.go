@@ -5,9 +5,16 @@ import (
 	"net"
 )
 
+type MessageType string
+
+const (
+	BlockMessage MessageType = "block"
+	TxMessage    MessageType = "tx"
+)
+
 type Message struct {
-	Type string `json:"type"` // "block" | "tx"
-	Data []byte `json:"data"`
+	Type MessageType `json:"type"`
+	Data []byte      `json:"data"`
 }
 
 type TCPServer struct {

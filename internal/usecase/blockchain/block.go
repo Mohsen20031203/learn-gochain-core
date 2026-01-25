@@ -115,7 +115,7 @@ func (s *NodeService) mineOnce() {
 		cancel()
 		fmt.Println("Lost mining race to network")
 		s.saveBlock(&netBlock)
-		fmt.Println("i give the block from another node")
+		fmt.Println("I give the block from another node", netBlock.Hash, " the time is :", time.Now())
 
 	case myBlock := <-mindMe:
 		if lastBlock != "" && !s.node.IsValidNewBlockChain(myBlock) {
@@ -124,7 +124,7 @@ func (s *NodeService) mineOnce() {
 		}
 
 		s.saveBlock(&myBlock)
-		fmt.Println("i can mine the block")
+		fmt.Println("I can mine the block", myBlock.Hash, " the time is :", time.Now())
 		s.broadcastBlock(&myBlock)
 	}
 
@@ -149,7 +149,7 @@ func (s *NodeService) broadcastBlock(blc *block.Block) {
 	}
 
 	msg := network.Message{
-		Type: "block",
+		Type: network.BlockMessage,
 		Data: data,
 	}
 

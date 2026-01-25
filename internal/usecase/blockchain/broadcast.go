@@ -15,7 +15,7 @@ func (s *NodeService) SetBroadcaster(b *network.TCPBroadcaster) {
 
 func (s *NodeService) HandleNodeMessage(msg network.Message) {
 	switch msg.Type {
-	case "block":
+	case network.BlockMessage:
 		var blc block.Block
 		if err := json.Unmarshal(msg.Data, &blc); err != nil {
 			fmt.Println("error unmarshall block from node message:", err)
@@ -26,7 +26,7 @@ func (s *NodeService) HandleNodeMessage(msg network.Message) {
 			return
 		}
 		s.TryAcceptBlock(blc)
-	case "tx":
+	case network.TxMessage:
 		var txs []transaction.Transaction
 		if err := json.Unmarshal(msg.Data, &txs); err != nil {
 			fmt.Println("error unmarshall txs from node message:", err)
